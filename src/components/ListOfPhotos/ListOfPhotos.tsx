@@ -3,7 +3,7 @@ import { deletePhotoFromServer } from '../../api/photos';
 
 type SetPhotos = (photos: Photo[]) => void;
 type SetPagesCount = (count: number) => void;
-type SetSelectedPhoto = (photo: number) => void;
+type SetSelectedPhotoId = (photo: number) => void;
 
 type Props = {
   photos: Photo[];
@@ -11,7 +11,7 @@ type Props = {
   selectedAlbum: number;
   setPagesCount: SetPagesCount;
   selectedPage: number;
-  setSelectedPhoto: SetSelectedPhoto;
+  setSelectedPhotoId: SetSelectedPhotoId;
 };
 
 export const ListOfPhotos: React.FC<Props> = (props) => {
@@ -21,7 +21,7 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
     selectedAlbum,
     setPagesCount,
     selectedPage,
-    setSelectedPhoto,
+    setSelectedPhotoId,
   } = props;
 
   const getFilteredPhotos = () => {
@@ -34,7 +34,7 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
     const pagesCount = Math.ceil(filteredPhotos.length / 10);
 
     setPagesCount(pagesCount);
-
+    console.log('filter')
     return filteredPhotos;
   };
 
@@ -45,20 +45,19 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
   };
 
   const handlePhotoSelect = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setSelectedPhoto(+event.currentTarget.name);
+    setSelectedPhotoId(+event.currentTarget.name);
   };
 
   const handlePhotoDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     deletePhotoFromServer(+event.currentTarget.name);
-    const photosCopy = [...photos];
-    const delIndex = photosCopy.findIndex(photo => photo.id === +event.currentTarget.name);
 
-    photosCopy.splice(delIndex, 1);
-    setPhotos(photosCopy);
+    const updatedPhotos = photos.filter(photo => photo.id !== +event.currentTarget.name);
+
+    setPhotos(updatedPhotos);
   };
 
   return (
-    <div className="px-4 row row-cols-1 row-cols-md-5 row-cols-sm-3 g-4">
+    <div className="px-4 pb-4 row row-cols-1 row-cols-md-5 row-cols-sm-3 g-4">
       {getPhotosToShow().map(photo => (
         <div className="col">
           <div className="card h-100">
@@ -75,7 +74,14 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
               />
             </button>
             <div className="card-body">
-              <h5 className="card-title">{photo.title}</h5>
+              <span>
+                {'Album: '}
+                {photo.albumId}
+              </span>
+              <h5 className="card-title text-truncate" title={photo.title}>
+                {'Title: '}
+                {photo.title}
+              </h5>
             </div>
             <button type="button" className="button is-danger" onClick={handlePhotoDelete} name={String(photo.id)}>Delete</button>
           </div>

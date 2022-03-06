@@ -20,23 +20,19 @@ export const Pagination: React.FC<Props> = (props) => {
     const list = [];
 
     if (pagesCount <= 5) {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 1; i <= pagesCount; i++) {
+      for (let i = 1; i <= pagesCount; i += 1) {
         list.push(i);
       }
     } else if (selectedPage <= 3) {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 5; i += 1) {
         list.push(i);
       }
     } else if (selectedPage > 3 && pagesCount - selectedPage >= 2) {
-      // eslint-disable-next-line no-plusplus
-      for (let i = selectedPage - 2; i <= selectedPage + 2; i++) {
+      for (let i = selectedPage - 2; i <= selectedPage + 2; i += 1) {
         list.push(i);
       }
     } else {
-      // eslint-disable-next-line no-plusplus
-      for (let i = pagesCount - 4; i <= pagesCount; i++) {
+      for (let i = pagesCount - 4; i <= pagesCount; i += 1) {
         list.push(i);
       }
     }
@@ -45,8 +41,8 @@ export const Pagination: React.FC<Props> = (props) => {
   };
 
   return (
-    <nav aria-label="Page navigation example">
-      <ul className="pagination justify-content-center py-4">
+    <nav>
+      <ul className="pagination justify-content-center pb-2">
         <button
           type="button"
           className="btn btn-warning mx-4"
@@ -76,6 +72,7 @@ export const Pagination: React.FC<Props> = (props) => {
           }}
         >
           Last page
+          {` (${pagesCount})`}
         </button>
       </ul>
     </nav>

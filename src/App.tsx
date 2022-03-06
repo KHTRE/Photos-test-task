@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import classNames from 'classnames';
 import { ListOfPhotos } from './components/ListOfPhotos';
 import { Header } from './components/Header';
 import { Pagination } from './components/Pagination';
@@ -15,7 +16,7 @@ export const App: React.FC = () => {
   const [selectedAlbum, setSelectedAlbum] = useState<number>(0);
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const [pagesCount, setPagesCount] = useState<number>(1);
-  const [selectedPhoto, setSelectedPhoto] = useState<number>(0);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<number>(0);
 
   const getPhotos = async () => {
     setLoading(true);
@@ -42,28 +43,37 @@ export const App: React.FC = () => {
   return (
     <div>
       <Modal
-        selectedPhoto={selectedPhoto}
+        selectedPhotoId={selectedPhotoId}
         photos={photos}
-        setSelectedPhoto={setSelectedPhoto}
+        setSelectedPhotoId={setSelectedPhotoId}
       />
-      <Header
-        albums={albums}
-        selectedAlbum={selectedAlbum}
-        setSelectedAlbum={setSelectedAlbum}
-        setSelectedPage={setSelectedPage}
-      />
+      <div
+        className={
+          classNames(
+            'sticky-top bg-light border-bottom mb-2',
+            { 'visually-hidden': selectedPhotoId },
+          )
+        }
+      >
+        <Header
+          albums={albums}
+          selectedAlbum={selectedAlbum}
+          setSelectedAlbum={setSelectedAlbum}
+          setSelectedPage={setSelectedPage}
+        />
+        <Pagination
+          selectedPage={selectedPage}
+          setSelectedPage={setSelectedPage}
+          pagesCount={pagesCount}
+        />
+      </div>
       <ListOfPhotos
         photos={photos}
         setPhotos={setPhotos}
         selectedAlbum={selectedAlbum}
         setPagesCount={setPagesCount}
         selectedPage={selectedPage}
-        setSelectedPhoto={setSelectedPhoto}
-      />
-      <Pagination
-        selectedPage={selectedPage}
-        setSelectedPage={setSelectedPage}
-        pagesCount={pagesCount}
+        setSelectedPhotoId={setSelectedPhotoId}
       />
       {loading && <Loader />}
       {error && <Error />}

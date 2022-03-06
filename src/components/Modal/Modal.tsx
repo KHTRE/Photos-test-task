@@ -1,20 +1,20 @@
 import React from 'react';
 import classNames from 'classnames';
 
-type SetSelectedPhoto = (photo: number) => void;
+type SetSelectedPhotoId = (photo: number) => void;
 
 type Props = {
-  selectedPhoto: number;
+  selectedPhotoId: number;
   photos: Photo[];
-  setSelectedPhoto: SetSelectedPhoto;
+  setSelectedPhotoId: SetSelectedPhotoId;
 };
 
 export const Modal: React.FC<Props> = (props) => {
-  const { selectedPhoto, photos, setSelectedPhoto } = props;
-  const correctPhoto = photos.find(photo => photo.id === selectedPhoto);
+  const { selectedPhotoId, photos, setSelectedPhotoId } = props;
+  const correctPhoto = photos.find(photo => photo.id === selectedPhotoId);
 
   return (
-    <div className={classNames('modal', { 'is-active': selectedPhoto })}>
+    <div className={classNames('modal', { 'is-active': selectedPhotoId })}>
       <div className="modal-background" />
       <div className="modal-dialog">
         <div className="modal-content">
@@ -26,7 +26,7 @@ export const Modal: React.FC<Props> = (props) => {
               data-bs-dismiss="modal"
               aria-label="Close"
               onClick={() => {
-                setSelectedPhoto(0);
+                setSelectedPhotoId(0);
               }}
             />
           </div>
