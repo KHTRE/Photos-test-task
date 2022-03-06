@@ -4,10 +4,12 @@ import { Header } from './components/Header';
 import { Pagination } from './components/Pagination';
 import { Modal } from './components/Modal';
 import { Loader } from './components/Loader';
+import { Error } from './components/Error';
 import { getPhotosFromServer } from './api/photos';
 
 export const App: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [albums, setAlbums] = useState<number[]>([]);
   const [selectedAlbum, setSelectedAlbum] = useState<number>(0);
@@ -17,7 +19,14 @@ export const App: React.FC = () => {
 
   const getPhotos = async () => {
     setLoading(true);
-    const photosFromServer:Photo[] = await getPhotosFromServer();
+    let photosFromServer: Photo[] = [];
+
+    try {
+      photosFromServer = await getPhotosFromServer();
+    } catch {
+      setError(true);
+    }
+
     const listOfAlbums = photosFromServer.map(photo => photo.albumId);
     const finalListOfAlbums = Array.from(new Set(listOfAlbums));
 
@@ -57,6 +66,7 @@ export const App: React.FC = () => {
         pagesCount={pagesCount}
       />
       {loading && <Loader />}
+      {error && <Error />}
     </div>
   );
 };
