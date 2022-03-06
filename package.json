@@ -1,9 +1,9 @@
 {
-  "name": "react_movies-list-fetch-movies",
+  "name": "photos-test-task",
   "homepage": ".",
   "version": "0.1.0",
   "keywords": [],
-  "author": "Mate Academy",
+  "author": "Tymur-Khananov",
   "license": "GPL-3.0",
   "dependencies": {
     "@types/node": "^12.20.18",
