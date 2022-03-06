@@ -34,7 +34,7 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
     const pagesCount = Math.ceil(filteredPhotos.length / 10);
 
     setPagesCount(pagesCount);
-    console.log('filter')
+
     return filteredPhotos;
   };
 
