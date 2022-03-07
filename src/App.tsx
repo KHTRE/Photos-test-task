@@ -62,11 +62,11 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     getFilteredPhotos();
-  }, [selectedAlbum]);
+  }, [selectedAlbum, itemsPerPage]);
 
   useEffect(() => {
     getPagesCount(filteredPhotos);
-  }, [itemsPerPage, filteredPhotos]);
+  }, [filteredPhotos]);
 
   return (
     <div>
