@@ -2,45 +2,39 @@ import React from 'react';
 import { deletePhotoFromServer } from '../../api/photos';
 
 type SetPhotos = (photos: Photo[]) => void;
-type SetPagesCount = (count: number) => void;
 type SetSelectedPhotoId = (photo: number) => void;
+type SetFilteredPhotos = (photo: Photo[]) => void;
 
 type Props = {
   photos: Photo[];
+  filteredPhotos: Photo[];
+  setFilteredPhotos: SetFilteredPhotos;
   setPhotos: SetPhotos;
-  selectedAlbum: number;
-  setPagesCount: SetPagesCount;
   selectedPage: number;
+  itemsPerPage: number;
   setSelectedPhotoId: SetSelectedPhotoId;
 };
 
 export const ListOfPhotos: React.FC<Props> = (props) => {
   const {
     photos,
+    filteredPhotos,
     setPhotos,
-    selectedAlbum,
-    setPagesCount,
+    setFilteredPhotos,
     selectedPage,
     setSelectedPhotoId,
+    itemsPerPage,
   } = props;
 
-  const getFilteredPhotos = () => {
-    let filteredPhotos = photos;
-
-    if (selectedAlbum !== 0) {
-      filteredPhotos = photos.filter(photo => photo.albumId === selectedAlbum);
+  const getPhotosToShow = () => {
+    if (filteredPhotos.length > 0) {
+      return filteredPhotos.filter((_photo, index) => (
+        index >= selectedPage * itemsPerPage - itemsPerPage && index < selectedPage * itemsPerPage
+      ));
     }
 
-    const pagesCount = Math.ceil(filteredPhotos.length / 10);
-
-    setPagesCount(pagesCount);
-
-    return filteredPhotos;
-  };
-
-  const getPhotosToShow = () => {
-    return getFilteredPhotos().filter((_photo, index) => (
-      index >= selectedPage * 10 - 10 && index < selectedPage * 10
+    return photos.filter((_photo, index) => (
+      index >= selectedPage * itemsPerPage - itemsPerPage && index < selectedPage * itemsPerPage
     ));
   };
 
@@ -51,9 +45,12 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
   const handlePhotoDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     deletePhotoFromServer(+event.currentTarget.name);
 
-    const updatedPhotos = photos.filter(photo => photo.id !== +event.currentTarget.name);
+    const newPhotos = photos.filter(photo => photo.id !== +event.currentTarget.name);
 
-    setPhotos(updatedPhotos);
+    const newFilterPhotos = filteredPhotos.filter(photo => photo.id !== +event.currentTarget.name);
+
+    setPhotos(newPhotos);
+    setFilteredPhotos(newFilterPhotos);
   };
 
   return (
@@ -75,11 +72,11 @@ export const ListOfPhotos: React.FC<Props> = (props) => {
             </button>
             <div className="card-body">
               <span>
-                {'Album: '}
+                <b>Album: </b>
                 {photo.albumId}
               </span>
               <h5 className="card-title text-truncate" title={photo.title}>
-                {'Title: '}
+                <b>Title: </b>
                 {photo.title}
               </h5>
             </div>

@@ -10,12 +10,14 @@ import { getPhotosFromServer } from './api/photos';
 
 export const App: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [filteredPhotos, setFilteredPhotos] = useState<Photo[]>([]);
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [albums, setAlbums] = useState<number[]>([]);
   const [selectedAlbum, setSelectedAlbum] = useState<number>(0);
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const [pagesCount, setPagesCount] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   const [selectedPhotoId, setSelectedPhotoId] = useState<number>(0);
 
   const getPhotos = async () => {
@@ -31,14 +33,40 @@ export const App: React.FC = () => {
     const listOfAlbums = photosFromServer.map(photo => photo.albumId);
     const finalListOfAlbums = Array.from(new Set(listOfAlbums));
 
+    setPagesCount(Math.ceil(photosFromServer.length / itemsPerPage));
     setPhotos(photosFromServer);
     setAlbums(finalListOfAlbums);
     setLoading(false);
   };
 
+  const getPagesCount = (preparedPhotos: Photo[]) => {
+    const numberOfPages = Math.ceil(preparedPhotos.length / itemsPerPage);
+
+    setPagesCount(numberOfPages);
+  };
+
+  const getFilteredPhotos = () => {
+    let photosByAlbum = photos;
+
+    if (selectedAlbum !== 0) {
+      photosByAlbum = photos.filter(photo => photo.albumId === selectedAlbum);
+    }
+
+    getPagesCount(photosByAlbum);
+    setFilteredPhotos(photosByAlbum);
+  };
+
   useEffect(() => {
     getPhotos();
   }, []);
+
+  useEffect(() => {
+    getFilteredPhotos();
+  }, [selectedAlbum]);
+
+  useEffect(() => {
+    getPagesCount(filteredPhotos);
+  }, [itemsPerPage, filteredPhotos]);
 
   return (
     <div>
@@ -62,6 +90,8 @@ export const App: React.FC = () => {
           setSelectedPage={setSelectedPage}
         />
         <Pagination
+          itemsPerPage={itemsPerPage}
+          setItemsPerPage={setItemsPerPage}
           selectedPage={selectedPage}
           setSelectedPage={setSelectedPage}
           pagesCount={pagesCount}
@@ -69,11 +99,12 @@ export const App: React.FC = () => {
       </div>
       <ListOfPhotos
         photos={photos}
+        filteredPhotos={filteredPhotos}
+        setFilteredPhotos={setFilteredPhotos}
         setPhotos={setPhotos}
-        selectedAlbum={selectedAlbum}
-        setPagesCount={setPagesCount}
         selectedPage={selectedPage}
         setSelectedPhotoId={setSelectedPhotoId}
+        itemsPerPage={itemsPerPage}
       />
       {loading && <Loader />}
       {error && <Error />}

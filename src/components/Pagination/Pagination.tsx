@@ -2,18 +2,34 @@ import React from 'react';
 import classNames from 'classnames';
 
 type SetSelectedPage = (page: number) => void;
+type SetItemsPerPage = (items: number) => void;
 
 type Props = {
   selectedPage: number;
   setSelectedPage: SetSelectedPage;
   pagesCount: number;
+  itemsPerPage: number;
+  setItemsPerPage: SetItemsPerPage;
 };
 
 export const Pagination: React.FC<Props> = (props) => {
-  const { pagesCount, selectedPage, setSelectedPage } = props;
+  const {
+    pagesCount,
+    selectedPage,
+    setSelectedPage,
+    itemsPerPage,
+    setItemsPerPage,
+  } = props;
 
   const setPage = (event: React.MouseEvent<HTMLButtonElement>) => {
     setSelectedPage(+event.currentTarget.name);
+  };
+
+  const handleItemsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (+event.target.value !== itemsPerPage) {
+      setItemsPerPage(+event.target.value);
+      setSelectedPage(1);
+    }
   };
 
   const getPagesList = () => {
@@ -41,7 +57,19 @@ export const Pagination: React.FC<Props> = (props) => {
   };
 
   return (
-    <nav>
+    <nav className="d-flex justify-content-center align-items-baseline">
+      <label htmlFor="select">
+        Per page: &nbsp;
+        <select
+          id="select"
+          value={itemsPerPage}
+          onChange={handleItemsPerPage}
+        >
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </label>
       <ul className="pagination justify-content-center pb-2">
         <button
           type="button"
